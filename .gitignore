@@ -1,0 +1,6 @@
+# ডিপেন্ডেন্সি ফোল্ডার (এটি অবশ্যই বাদ দেওয়া উচিত)
+node_modules/
+.env
+.vercel
+# লক ফাইল
+package-lock.json
