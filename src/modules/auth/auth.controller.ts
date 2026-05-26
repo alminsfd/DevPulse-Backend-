@@ -27,8 +27,26 @@ const createUser = async (req: Request, res: Response) => {
 
 }
 
+const checkUser = async (req: Request, res: Response) => {
+
+     try {
+          const result = await authService.checkedUserIntoDb(req.body)
+          sendResponse(res, {
+               statusCode: 200,
+               success: true,
+               message: "Login successful",
+               data: result,
+          })
+
+     } catch (error: any) {
+
+     }
+
+}
+
 export const authController = {
 
-     createUser
+     createUser,
+     checkUser
 
 }
