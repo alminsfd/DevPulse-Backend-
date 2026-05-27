@@ -27,6 +27,7 @@ const createUser = async (req: Request, res: Response) => {
 
 }
 
+
 const checkUser = async (req: Request, res: Response) => {
 
      try {
@@ -39,7 +40,12 @@ const checkUser = async (req: Request, res: Response) => {
           })
 
      } catch (error: any) {
-
+          sendResponse(res, {
+               statusCode: 500,
+               success: false,
+               message: error.message,
+               error: error,
+          })
      }
 
 }
