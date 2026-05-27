@@ -53,6 +53,5 @@ const checkUser = async (req: Request, res: Response) => {
 export const authController = {
 
      createUser,
-     checkUser
-
+     checkUser,
 }
