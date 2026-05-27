@@ -14,7 +14,7 @@ const auth = (...roles: ROLES[]) => {
 
                const token = req.headers.authorization;
                if (!token) {
-                    sendResponse(res, {
+                    return sendResponse(res, {
                          statusCode: 401,
                          success: false,
                          message: "Unauthorized access!!",
@@ -31,15 +31,15 @@ const auth = (...roles: ROLES[]) => {
 
                const user = userData.rows[0];
                if (!user) {
-                    sendResponse(res, {
+                    return sendResponse(res, {
                          statusCode: 401,
                          success: false,
-                         message: " Unauthorized access!! ",
+                         message: " Unauthorized access-2 !!",
                     })
                }
 
                if (roles.length && !roles.includes(user.role)) {
-                    sendResponse(res, {
+                    return sendResponse(res, {
                          statusCode: 403,
                          success: false,
                          message: "Forbidden access!!",
@@ -53,7 +53,7 @@ const auth = (...roles: ROLES[]) => {
 
           } catch (error) {
 
-               next(error)
+               return next(error)
 
           }
 

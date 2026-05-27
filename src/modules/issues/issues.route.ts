@@ -7,5 +7,4 @@ const router = Router()
 
 router.post("/", auth(USER_ROLE.contributor, USER_ROLE.maintainer), issuesController.createIssues)
 
-
 export const issueRouter = router
