@@ -5,3 +5,8 @@ export interface Issue {
 }
 
 
+export interface IIssueQuery {
+     sort?: "newest" | "oldest";
+     type?: string;
+     status?: string;
+}
