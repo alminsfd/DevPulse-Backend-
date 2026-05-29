@@ -20,7 +20,7 @@ app.use(express.text());
 app.use(express.urlencoded({ extended: true }));
 app.use(
      cors({
-          origin: "http://localhost:5000",
+          origin: "https://dev-pulse-backend-six.vercel.app",
      }),
 );
 
