@@ -27,6 +27,7 @@ const createIssues = async (req: Request, res: Response) => {
                statusCode: 500,
                success: false,
                message: error.message,
+               error: error
           });
      }
 }
@@ -48,11 +49,43 @@ const getAllIssues = async (req: Request, res: Response) => {
                statusCode: 500,
                success: false,
                message: error.message,
+               error: error
           });
      }
 }
 
+const getSingleIssue = async (req: Request, res: Response) => {
+     try {
+          const { id } = req.params;
+          if (!id || isNaN(Number(id))) {
+               return sendResponse(res, {
+                    statusCode: 400,
+                    success: false,
+                    message: "Invalid issue ID",
+               });
+          }
+          const result = await issueService.getSingleIssueFromDB(Number(id));
+
+
+          sendResponse(res, {
+               statusCode: 200,
+               success: true,
+               message: "Issue retrieved successfully",
+               data: result,
+          });
+     } catch (error: any) {
+          sendResponse(res, {
+               statusCode: 500,
+               success: false,
+               message: error.message,
+               error: error
+
+          });
+     }
+};
+
 export const issuesController = {
      createIssues,
-     getAllIssues
+     getAllIssues,
+     getSingleIssue,
 }

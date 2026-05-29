@@ -86,11 +86,44 @@ const getAllIssuesFromDB = async (query: IIssueQuery) => {
 
 }
 
+const getSingleIssueFromDB = async (issueId: number) => {
+
+     const issueResult = await pools.query(
+          `SELECT * FROM issues 
+     WHERE id = $1`,
+          [issueId]
+     );
+
+     const issue = issueResult.rows[0];
+
+     if (!issue) {
+          throw new Error("Issue not found!");
+     }
+
+     const userResult = await pools.query(
+          `SELECT id, name, role FROM users WHERE id = $1`,
+          [issue.reporter_id]
+     );
+
+     const user = userResult.rows[0];
+
+
+     const { reporter_id, ...restOfIssue } = issue;
+
+     const formattedIssue = {
+          ...restOfIssue,
+          reporter: user || null,
+     };
+
+     return formattedIssue;
+};
+
 
 
 export const issueService = {
 
      createIssueIntoDB,
-     getAllIssuesFromDB
+     getAllIssuesFromDB,
+     getSingleIssueFromDB,
 
 } 
