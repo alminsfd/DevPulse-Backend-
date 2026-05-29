@@ -179,12 +179,30 @@ const updateIssueInDB = async (issueId: number, user: JwtPayload, payload: IUpda
      return updateResult.rows[0];
 };
 
+const deleteIssueFromDB = async (issueId: number) => {
+     const issueCheck = await pools.query(
+          `SELECT id FROM issues WHERE id = $1`,
+          [issueId]
+     );
 
+     if (issueCheck.rows.length === 0) {
+          throw new Error("Issue not found!");
+
+     }
+
+     await pools.query(
+          `DELETE FROM issues WHERE id = $1`,
+          [issueId]
+     );
+
+     return true;
+};
 
 export const issueService = {
 
      createIssueIntoDB,
      getAllIssuesFromDB,
      getSingleIssueFromDB,
-     updateIssueInDB
+     updateIssueInDB,
+     deleteIssueFromDB
 } 
