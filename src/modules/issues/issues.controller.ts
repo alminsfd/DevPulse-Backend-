@@ -84,8 +84,39 @@ const getSingleIssue = async (req: Request, res: Response) => {
      }
 };
 
+const updateIssue = async (req: Request, res: Response) => {
+     try {
+          const { id } = req.params;
+
+
+          if (!req.user) {
+               return sendResponse(res, {
+                    statusCode: 401,
+                    success: false,
+                    message: "User not authenticated",
+               });
+          }
+
+          const result = await issueService.updateIssueInDB(Number(id), req.user, req.body);
+
+          sendResponse(res, {
+               statusCode: 200,
+               success: true,
+               message: "Issue updated successfully",
+               data: result,
+          });
+     } catch (error: any) {
+          sendResponse(res, {
+               statusCode: 500,
+               success: false,
+               message: error.message,
+               error: error
+          });
+     }
+}
 export const issuesController = {
      createIssues,
      getAllIssues,
      getSingleIssue,
+     updateIssue
 }

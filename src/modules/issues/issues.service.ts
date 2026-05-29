@@ -1,5 +1,6 @@
+import type { JwtPayload } from "jsonwebtoken";
 import { pools } from "../../db";
-import type { IIssueQuery, Issue } from "./issues.interface"
+import type { IIssueQuery, Issue, IUpdateIssueInput } from "./issues.interface"
 
 
 const createIssueIntoDB = async (reporter_id: number, issueData: Issue) => {
@@ -118,6 +119,66 @@ const getSingleIssueFromDB = async (issueId: number) => {
      return formattedIssue;
 };
 
+const updateIssueInDB = async (issueId: number, user: JwtPayload, payload: IUpdateIssueInput) => {
+     const { title, description, type } = payload;
+
+
+     const issueResult = await pools.query(
+          `SELECT id, status, reporter_id FROM issues WHERE id = $1`,
+          [issueId]
+     );
+     const issue = issueResult.rows[0];
+
+     if (!issue) {
+          throw new Error("Issue not found!");
+     }
+
+     if (user.role === "contributor") {
+          if (issue.reporter_id !== user.id) {
+               throw new Error("You can only update your own issues!");
+          }
+          if (issue.status !== "open") {
+               throw new Error("You can only update issues when they are open!");
+          }
+     }
+
+
+     const queryValues: any[] = [];
+     const updateFields: string[] = [];
+
+     if (title) {
+          queryValues.push(title);
+          updateFields.push(`title = $${queryValues.length}`);
+     }
+     if (description) {
+          queryValues.push(description);
+          updateFields.push(`description = $${queryValues.length}`);
+     }
+     if (type) {
+          queryValues.push(type);
+          updateFields.push(`type = $${queryValues.length}`);
+     }
+
+
+     if (updateFields.length === 0) {
+          throw new Error("At least one field must be provided for update");
+     }
+
+     queryValues.push(issueId);
+     const issueIdPlaceholder = `$${queryValues.length}`;
+
+     const baseQuery = `
+    UPDATE issues 
+    SET ${updateFields.join(", ")}, updated_at = NOW() 
+    WHERE id = ${issueIdPlaceholder}
+    RETURNING *;
+  `;
+
+     const updateResult = await pools.query(baseQuery, queryValues);
+
+     return updateResult.rows[0];
+};
+
 
 
 export const issueService = {
@@ -125,5 +186,5 @@ export const issueService = {
      createIssueIntoDB,
      getAllIssuesFromDB,
      getSingleIssueFromDB,
-
+     updateIssueInDB
 } 

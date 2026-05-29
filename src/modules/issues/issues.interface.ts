@@ -10,3 +10,9 @@ export interface IIssueQuery {
      type?: string;
      status?: string;
 }
+
+export interface IUpdateIssueInput {
+     title?: string;
+     description?: string;
+     type?: string;
+}
